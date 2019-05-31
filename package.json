@@ -1,5 +1,5 @@
 {
-  "name": "otp-cli",
+  "name": "otpvault-cli",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,18 +7,18 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "otp": "bin/otp"
+    "otpv": "bin/otpv"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/brooswit/otp-cli.git"
+    "url": "git+https://github.com/brooswit/otpvault-cli.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/brooswit/otp-cli/issues"
+    "url": "https://github.com/brooswit/otpvault-cli/issues"
   },
-  "homepage": "https://github.com/brooswit/otp-cli#readme",
+  "homepage": "https://github.com/brooswit/otpvault-cli#readme",
   "dependencies": {
     "otplib": "11.0.1"
   }
