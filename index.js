@@ -8,21 +8,12 @@ var rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
-
-rl._writeToOutput = function _writeToOutput(stringToWrite) {
-  if (rl.stdoutMuted)
-    rl.output.write("*");
-  else
-    rl.output.write(stringToWrite);
-};
-
 rl.stdoutMuted = true;
 
 rl.question('Password: ', function(password) {
-  console.log('\nPassword is ' + password);
+    console.log();
   rl.close();
     var simpleCrypto = new SimpleCrypto(password);
-    var chiperText = simpleCrypto.encrypt(plainText);
 
     const homedir = require('os').homedir();
 
@@ -36,7 +27,7 @@ rl.question('Password: ', function(password) {
         if (action === 'reset') return console.log('otp reset');
     }
 
-    let encryptedContents = fs.readFileSync(`${homedir}/.otp`);
+    let encryptedContents = fs.readFileSync(`${homedir}/.otp`).toString();
     let contents = simpleCrypto.decrypt(encryptedContents);
     let otps = {};
     try {
@@ -50,7 +41,7 @@ rl.question('Password: ', function(password) {
         for(let otpName in otps) {
             let otpSecret = otps[otpName];
             let otpToken = otplib.authenticator.generate(otpSecret);
-            console.log(`- ${otpName}: ${otpToken}`);
+            console.log(`  ${otpName}: ${otpToken}`);
         }
         console.warn('--------------------------------------------------------------------------------')
     } else if (action === 'add') {
@@ -65,6 +56,14 @@ rl.question('Password: ', function(password) {
         console.error(`ERROR unknown action ${action}`);
     }
     function saveEncrypted(data) {
-        fs.writeFileSync(`${homedir}/.otp`,simpleCrypto.encrypt(JSON.stringify(otps)));
+        fs.writeFileSync(`${homedir}/.otp`,simpleCrypto.encrypt(JSON.stringify(data)));
     }
 });
+
+rl._writeToOutput = function _writeToOutput(stringToWrite) {
+  if (rl.stdoutMuted)
+    rl.output.write("*");
+  else
+    rl.output.write(stringToWrite);
+};
+
