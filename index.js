@@ -1,36 +1,70 @@
+const readline = require('readline');
 const fs = require('fs')
 const otplib = require('otplib')
+const SimpleCrypto = require("simple-crypto-js").default;
+/* ask for password */
 
-const homedir = require('os').homedir();
+var rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
-let action = process.argv[2]
-let newOtpName = process.argv[3]
-let newOtpSecret = process.argv[4]
+rl._writeToOutput = function _writeToOutput(stringToWrite) {
+  if (rl.stdoutMuted)
+    rl.output.write("*");
+  else
+    rl.output.write(stringToWrite);
+};
 
-if (!fs.existsSync(`${homedir}/.otp`)) {
-    console.warn('initializing')
-    fs.writeFileSync(`${homedir}/.otp`,'{}')
-}
+rl.stdoutMuted = true;
 
-let contents = fs.readFileSync(`${homedir}/.otp`);
-let otps = JSON.parse(contents);
+rl.question('Password: ', function(password) {
+  console.log('\nPassword is ' + password);
+  rl.close();
+    var simpleCrypto = new SimpleCrypto(password);
+    var chiperText = simpleCrypto.encrypt(plainText);
 
-if (!action) {
-    console.warn('- OTPs -------------------------------------------------------------------------')
-    for(let otpName in otps) {
-        let otpSecret = otps[otpName]
-        let otpToken = otplib.authenticator.generate(otpSecret)
-        console.log(`- ${otpName}: ${otpToken}`)
+    const homedir = require('os').homedir();
+
+    let action = process.argv[2];
+    let newOtpName = process.argv[3];
+    let newOtpSecret = process.argv[4];
+
+    if (!fs.existsSync(`${homedir}/.otp`) || action === 'reset') {
+        console.warn('initializing');
+        saveEncrypted({});
+        if (action === 'reset') return console.log('otp reset');
     }
-    console.warn('--------------------------------------------------------------------------------')
-} else if (action === 'add') {
-    console.warn(`Added ${newOtpName}`)
-    otps[newOtpName] = newOtpSecret
-    fs.writeFileSync(`${homedir}/.otp`,JSON.stringify(otps))
-} else if (action === 'remove') {
-    console.warn(`Removed ${newOtpName}`)
-    delete otps[newOtpName]
-    fs.writeFileSync(`${homedir}/.otp`,JSON.stringify(otps))
-} else {
-    console.error(`ERROR unknown action ${action}`)
-}
+
+    let encryptedContents = fs.readFileSync(`${homedir}/.otp`);
+    let contents = simpleCrypto.decrypt(encryptedContents);
+    let otps = {};
+    try {
+        otps = JSON.parse(contents);
+    } catch(e) {
+        return console.log("decryption failed");
+    }
+
+    if (!action) {
+        console.warn('- OTPs -------------------------------------------------------------------------')
+        for(let otpName in otps) {
+            let otpSecret = otps[otpName];
+            let otpToken = otplib.authenticator.generate(otpSecret);
+            console.log(`- ${otpName}: ${otpToken}`);
+        }
+        console.warn('--------------------------------------------------------------------------------')
+    } else if (action === 'add') {
+        console.warn(`Added ${newOtpName}`)
+        otps[newOtpName] = newOtpSecret;
+        saveEncrypted(otps);
+    } else if (action === 'remove') {
+        console.warn(`Removed ${newOtpName}`)
+        delete otps[newOtpName];
+        saveEncrypted(otps);
+    } else {
+        console.error(`ERROR unknown action ${action}`);
+    }
+    function saveEncrypted(data) {
+        fs.writeFileSync(`${homedir}/.otp`,simpleCrypto.encrypt(JSON.stringify(otps)));
+    }
+});

@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/brooswit/otpvault-cli#readme",
   "dependencies": {
-    "otplib": "11.0.1"
+    "otplib": "11.0.1",
+    "simple-crypto-js": "^2.2.0"
   }
 }
