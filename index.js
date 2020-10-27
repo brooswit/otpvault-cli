@@ -60,7 +60,12 @@ rl.question('Enter your OTPV password: ', function(password) {
         console.error(`ERROR unknown action ${action}`);
     }
     function saveEncrypted(data) {
-        fs.writeFileSync(`${homedir}/.otp`,simpleCrypto.encrypt(JSON.stringify(data)));
+        let raw = simpleCrypto.encrypt(JSON.stringify(data))
+        console.log(`saving`);
+        console.log(data);
+        console.log(`as`);
+        console.log(raw)
+        fs.writeFileSync(`${homedir}/.otp`, raw);
     }
 });
 
