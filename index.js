@@ -29,18 +29,7 @@ rl.question('Enter your OTPV password: ', function(password) {
     }
 
     let encryptedContents = fs.readFileSync(`${homedir}/.otp`).toString();
-    let contents = simpleCrypto.decrypt(encryptedContents);
-    let otps = {};
-    try {
-        otps = JSON.parse(contents);
-    } catch(e) {
-        console.log(`Failed to decrypt OTPV data.`);
-        console.log(encryptedContents);
-        console.log(typeof contents);
-        console.log(contents);
-        console.log(`${e}`);
-        return;
-    }
+    let otps = simpleCrypto.decrypt(encryptedContents);
 
     if (!action) {
         console.warn('- OTPs -------------------------------------------------------------------------')
