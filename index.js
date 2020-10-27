@@ -22,9 +22,10 @@ rl.question('Enter your OTPV password: ', function(password) {
     let newOtpSecret = process.argv[4];
 
     if (!fs.existsSync(`${homedir}/.otp`) || action === 'reset') {
-        if (action === 'reset') return console.log('Resetting OTPV...');
+        if (action === 'reset') console.log('Resetting OTPV...');
         console.warn('Initializing OTPV...');
         saveEncrypted({});
+        return;
     }
 
     let encryptedContents = fs.readFileSync(`${homedir}/.otp`).toString();
