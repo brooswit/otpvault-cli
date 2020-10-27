@@ -12,7 +12,7 @@ rl.stdoutMuted = true;
 
 rl.question('Enter your OTPV password: ', function(password) {
     console.log();
-  rl.close();
+    rl.close();
     var simpleCrypto = new SimpleCrypto(password);
 
     const homedir = require('os').homedir();
@@ -35,7 +35,8 @@ rl.question('Enter your OTPV password: ', function(password) {
         otps = JSON.parse(contents);
     } catch(e) {
         console.log(`Failed to decrypt OTPV data.`);
-        console.log(`"${contents}"`);
+        console.log(encryptedContents);
+        console.log(contents);
         console.log(`${e}`);
         return;
     }
