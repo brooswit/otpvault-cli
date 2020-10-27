@@ -36,6 +36,7 @@ rl.question('Enter your OTPV password: ', function(password) {
     } catch(e) {
         console.log(`Failed to decrypt OTPV data.`);
         console.log(encryptedContents);
+        console.log(typeof contents);
         console.log(contents);
         console.log(`${e}`);
         return;
