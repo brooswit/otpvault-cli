@@ -10,7 +10,7 @@ var rl = readline.createInterface({
 });
 rl.stdoutMuted = true;
 
-rl.question('Password: ', function(password) {
+rl.question('Enter your OTPV password: ', function(password) {
     console.log();
   rl.close();
     var simpleCrypto = new SimpleCrypto(password);
@@ -22,9 +22,9 @@ rl.question('Password: ', function(password) {
     let newOtpSecret = process.argv[4];
 
     if (!fs.existsSync(`${homedir}/.otp`) || action === 'reset') {
-        console.warn('initializing');
+        if (action === 'reset') return console.log('Resetting OTPV...');
+        console.warn('Initializing OTPV...');
         saveEncrypted({});
-        if (action === 'reset') return console.log('otp reset');
     }
 
     let encryptedContents = fs.readFileSync(`${homedir}/.otp`).toString();
@@ -33,7 +33,10 @@ rl.question('Password: ', function(password) {
     try {
         otps = JSON.parse(contents);
     } catch(e) {
-        return console.log("decryption failed");
+        console.log(`Failed to decrypt OTPV data.`);
+        console.log(`"${contents}"`);
+        console.log(`${e}`);
+        return;
     }
 
     if (!action) {
